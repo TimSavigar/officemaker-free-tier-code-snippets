@@ -32,9 +32,13 @@ File conversion, WBS assembly, enterprise automation, authenticated full-documen
 - **`document_json` must be a string**: the stringified JSON object (not a nested JSON object).
 - **`document_type`** is `word`, `excel`, or `powerpoint` (lowercase). Inside Word JSON, the root `type` is usually `"document"`.
 
+## Published repository
+
+- [github.com/TimSavigar/officemaker-free-tier-code-snippets](https://github.com/TimSavigar/officemaker-free-tier-code-snippets)
+
 ## Related open-source starters
 
-Platform-specific examples (Zapier, n8n, Pipedream, Salesforce samples, etc.) live in sibling repositories under the same GitHub organization. See the [OfficeMaker Developer](https://docs.officemaker.ai/developer) page on the public site for curated links.
+Platform-specific examples (Zapier, n8n, Pipedream, Salesforce samples, etc.) are listed on the [OfficeMaker Developer](https://docs.officemaker.ai/developer) page. Matching starter folders live alongside this repo under `OfficeMaker Projects/`; publish them under the same GitHub names to activate every link.
 
 ## License
 
