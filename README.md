@@ -16,6 +16,9 @@ OfficeMaker keeps Office-file construction outside the language-model context. T
 - [Developer hub](https://officemaker.ai/developer)
 - [MCP document generation](https://officemaker.ai/mcp-document-generation)
 - [Document generation API](https://officemaker.ai/document-generation-api)
+
+- [OfficeMaker evidence hub](https://officemaker.ai/evidence)
+- [Token-efficiency methodology](https://officemaker.ai/evidence/token-efficiency-methodology)
 - [AI workflow automation tools](https://officemaker.ai/ai-workflow-automation-tools)
 
 No API key is required for the public free routes. For Custom GPT Actions, import the live OpenAPI:
