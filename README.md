@@ -43,7 +43,12 @@ File conversion, WBS assembly, enterprise automation, authenticated full-documen
 | [snippets/curl-schema.sh](snippets/curl-schema.sh) | curl | Fetch Word schema (markdown) |
 | [snippets/curl-create-word.sh](snippets/curl-create-word.sh) | curl | Create a minimal Word document |
 | [snippets/node-create-document.mjs](snippets/node-create-document.mjs) | Node 18+ | Schema + create with `fetch` |
+| [snippets/node-create-all-formats.mjs](snippets/node-create-all-formats.mjs) | Node 20+ | Generate and download one DOCX, XLSX and PPTX using live schemas |
 | [snippets/python-requests.py](snippets/python-requests.py) | Python 3 | Same flow with `urllib` (stdlib only) |
+
+## Try all three formats
+
+Run `node snippets/node-create-all-formats.mjs` with Node 20+. The example fetches each live schema, creates three native editable Office files and downloads them into `officemaker-output/` on your machine. It uses fictional data only. When outputs are published elsewhere, verify generation, rendering, file validity and access controls first.
 
 ## Request rules (GPT Actions / free API)
 
