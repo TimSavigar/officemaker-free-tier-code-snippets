@@ -27,11 +27,20 @@ const examples = [
     type: 'excel', ext: 'xlsx', filename: 'task-tracker',
     doc: {
       type: 'excel',
-      sheets: [{ name: 'Tasks', rows: [
-        { cells: [{ col: 0, row: 0, t: 's', value: 'Task' }, { col: 1, row: 0, t: 's', value: 'Status' }] },
-        { cells: [{ col: 0, row: 1, t: 's', value: 'Prepare brief' }, { col: 1, row: 1, t: 's', value: 'In progress' }] },
-        { cells: [{ col: 0, row: 2, t: 's', value: 'Review output' }, { col: 1, row: 2, t: 's', value: 'Pending' }] }
-      ] }]
+      sheets: [{
+        name: 'Tasks',
+        cells: [
+          { r: 'A1', value: 'Task' },
+          { r: 'B1', value: 'Status' },
+          { r: 'C1', value: 'Length' },
+          { r: 'A2', value: 'Prepare brief' },
+          { r: 'B2', value: 'In progress' },
+          { r: 'C2', formula: 'LEN(A2)' },
+          { r: 'A3', value: 'Review output' },
+          { r: 'B3', value: 'Pending' },
+          { r: 'C3', formula: 'LEN(A3)' }
+        ]
+      }]
     }
   },
   {
@@ -49,11 +58,30 @@ const examples = [
   }
 ];
 
+async function readJson(response, label) {
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(`${label} returned non-JSON (HTTP ${response.status}): ${text.slice(0, 180)}`);
+  }
+}
+
+function assertOfficeArchive(bytes, example) {
+  if (!bytes || bytes.length < 64 || bytes[0] !== 0x50 || bytes[1] !== 0x4b) {
+    throw new Error(`${example.type} download is not a ZIP Office archive (${bytes?.length || 0} bytes).`);
+  }
+}
+
 async function main() {
   await mkdir(OUT, { recursive: true });
   for (const example of examples) {
     const schema = await fetch(`${BASE}/gpt/v1/schema?documentType=${example.type}&format=markdown`);
-    if (!schema.ok) throw new Error(`Schema lookup for ${example.type}: HTTP ${schema.status}`);
+    const schemaText = await schema.text();
+    if (!schema.ok || schemaText.length < 40) {
+      throw new Error(`Schema lookup for ${example.type}: HTTP ${schema.status}, ${schemaText.length} chars`);
+    }
+    console.log(`Schema ${example.type}: ${schemaText.length} chars`);
     const request = {
       document_type: example.type,
       file_name: example.filename,
@@ -65,17 +93,20 @@ async function main() {
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify(request)
     });
-    const data = await created.json();
-    if (!created.ok || !data.success || !data.documentUrl) {
+    const data = await readJson(created, `Create ${example.type}`);
+    const downloadHref = data.documentDownloadUrl || data.documentUrl;
+    if (!created.ok || !data.success || !downloadHref) {
       throw new Error(`Create ${example.type} failed (HTTP ${created.status}): ${JSON.stringify(data).slice(0, 300)}`);
     }
-    const downloadUrl = new URL(data.documentDownloadUrl || data.documentUrl);
+    const downloadUrl = new URL(downloadHref);
     if (downloadUrl.protocol !== 'https:') throw new Error('Refusing an insecure document download URL.');
     const response = await fetch(downloadUrl);
     if (!response.ok) throw new Error(`Download ${example.type}: HTTP ${response.status}`);
+    const bytes = Buffer.from(await response.arrayBuffer());
+    assertOfficeArchive(bytes, example);
     const output = join(OUT, `${example.filename}.${example.ext}`);
-    await writeFile(output, Buffer.from(await response.arrayBuffer()));
-    console.log(`Created ${output}`);
+    await writeFile(output, bytes);
+    console.log(`Created ${output} (${bytes.length} bytes)`);
   }
   console.log('All three native Office examples created successfully.');
 }

@@ -16,6 +16,7 @@ OfficeMaker keeps Office-file construction outside the language-model context. T
 - [Developer hub](https://officemaker.ai/developer)
 - [MCP document generation](https://officemaker.ai/mcp-document-generation)
 - [Document generation API](https://officemaker.ai/document-generation-api)
+- [Document examples](https://officemaker.ai/examples)
 
 - [OfficeMaker evidence hub](https://officemaker.ai/evidence)
 - [Token-efficiency methodology](https://officemaker.ai/evidence/token-efficiency-methodology)
@@ -49,6 +50,8 @@ File conversion, WBS assembly, enterprise automation, authenticated full-documen
 ## Try all three formats
 
 Run `node snippets/node-create-all-formats.mjs` with Node 20+. The example fetches each live schema, creates three native editable Office files and downloads them into `officemaker-output/` on your machine. It uses fictional data only. When outputs are published elsewhere, verify generation, rendering, file validity and access controls first.
+
+Excel cells use an A1 reference in `r` and content in `value`. A formula is the formula body without a leading `=`, for example `LEN(A2)`. The live schema ignores a `rows` array, so that shape produces an empty sheet. The free tier adds a thank-you cover in front of the requested Word body, Excel sheet and PowerPoint slide. The requested content stays in the file as editable text, cells and shapes.
 
 ## Request rules (GPT Actions / free API)
 
